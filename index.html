@@ -386,7 +386,12 @@
         </div>
       </div>
       <!-- Tips Display -->
-      <div id="tipsList" class="grid grid-cols-1 gap-6 mt-8"></div>
+      <div id="tipCarousel" class="grid grid-cols-1 gap-6 mt-8"></div>
+      <div class="flex justify-center mt-6">
+        <button id="tipPrev" class="text-yellow-400 hover:text-blue-400 text-2xl mr-4">←</button>
+        <button id="tipNext" class="text-yellow-400 hover:text-blue-400 text-2xl">→</button>
+      </div>
+      <div id="tipDots" class="flex space-x-2 mt-4"></div>
     </div>
   </div>
 
@@ -516,41 +521,60 @@ const tipsData = [
   { id: 3, name: "Samir", text: "Join student Facebook groups to find accommodation and part-time jobs.", likes: 2 },
   { id: 4, name: "", text: "Don’t be afraid to ask for help—Aussies are friendly and happy to guide you!", likes: 4 },
 ];
-// --- Render Tips ---
-function renderTips() {
-  const tipsList = document.getElementById('tipsList');
-  if (!tipsList) return;
-  tipsList.innerHTML = '';
-  tipsData.forEach(tip => {
-    const liked = localStorage.getItem('tip_like_' + tip.id) === '1';
-    const card = document.createElement('div');
-    card.className = 'glass rounded-xl shadow-lg p-6 mb-2 flex flex-col items-start pop-in relative';
-    card.innerHTML = `
-      <div class="text-blue-100 text-lg mb-2">“${tip.text}”</div>
-      <div class="flex items-center w-full justify-between">
+let tipIndex = 0;
+let tipAutoTimer = null;
+function renderTipCarousel() {
+  const tipCarousel = document.getElementById('tipCarousel');
+  const tipDots = document.getElementById('tipDots');
+  if (!tipCarousel || !tipDots) return;
+  const tip = tipsData[tipIndex];
+  const liked = localStorage.getItem('tip_like_' + tip.id) === '1';
+  tipCarousel.innerHTML = `
+    <div class="glass rounded-xl shadow-lg p-6 flex flex-col items-center pop-in relative w-full">
+      <div class="text-blue-100 text-lg mb-2 text-center">“${tip.text}”</div>
+      <div class="flex items-center w-full justify-between mt-2">
         <span class="text-yellow-400 font-semibold">${tip.name ? tip.name : 'Anonymous'}</span>
         <button class="like-btn flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold transition-colors ${liked ? 'bg-yellow-400 text-blue-900' : 'bg-blue-800 text-yellow-400 hover:bg-yellow-400 hover:text-blue-900'}" data-id="${tip.id}">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.343l-6.828-6.829a4 4 0 010-5.656z"/></svg>
           <span class="like-count">${tip.likes + (liked ? 1 : 0)}</span>
         </button>
       </div>
-    `;
-    tipsList.appendChild(card);
-  });
+    </div>
+  `;
   // Like button logic
-  document.querySelectorAll('.like-btn').forEach(btn => {
-    btn.onclick = function() {
-      const id = btn.getAttribute('data-id');
-      if (localStorage.getItem('tip_like_' + id) === '1') return; // already liked
-      localStorage.setItem('tip_like_' + id, '1');
-      const countSpan = btn.querySelector('.like-count');
-      countSpan.textContent = parseInt(countSpan.textContent) + 1;
-      btn.classList.add('bg-yellow-400', 'text-blue-900');
-      btn.classList.remove('bg-blue-800', 'text-yellow-400', 'hover:bg-yellow-400', 'hover:text-blue-900');
-    };
-  });
+  tipCarousel.querySelector('.like-btn').onclick = function() {
+    if (localStorage.getItem('tip_like_' + tip.id) === '1') return;
+    localStorage.setItem('tip_like_' + tip.id, '1');
+    renderTipCarousel();
+  };
+  // Dots
+  tipDots.innerHTML = '';
+  for (let i = 0; i < tipsData.length; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'w-3 h-3 rounded-full ' + (i === tipIndex ? 'bg-yellow-400' : 'bg-blue-800');
+    dot.style.outline = 'none';
+    dot.onclick = () => { tipIndex = i; renderTipCarousel(); resetTipAuto(); };
+    tipDots.appendChild(dot);
+  }
 }
-window.addEventListener('DOMContentLoaded', renderTips);
+function nextTip() {
+  tipIndex = (tipIndex + 1) % tipsData.length;
+  renderTipCarousel();
+}
+function prevTip() {
+  tipIndex = (tipIndex - 1 + tipsData.length) % tipsData.length;
+  renderTipCarousel();
+}
+function resetTipAuto() {
+  if (tipAutoTimer) clearInterval(tipAutoTimer);
+  tipAutoTimer = setInterval(() => { nextTip(); }, 5000);
+}
+window.addEventListener('DOMContentLoaded', function() {
+  renderTipCarousel();
+  resetTipAuto();
+  document.getElementById('tipNext').onclick = function() { nextTip(); resetTipAuto(); };
+  document.getElementById('tipPrev').onclick = function() { prevTip(); resetTipAuto(); };
+});
 // --- Tip Form Spam Protection & Thank You Modal ---
 const tipForm = document.getElementById('tipForm');
 const tipThankYouModal = document.getElementById('tipThankYouModal');
