@@ -325,14 +325,28 @@
       </div>
     </section>
     <section id="tips" class="py-16 px-4 max-w-3xl mx-auto fade-in">
-      <h2 class="text-3xl font-bold text-yellow-400 mb-4 text-center brand-heading">Student Tips (Coming Soon)</h2>
-      <p class="text-blue-200 text-center mb-6">Share your best tips for new students! Community submissions will be open soon.</p>
-      <form class="glass rounded-2xl shadow-inner p-8 flex flex-col space-y-4 opacity-50 cursor-not-allowed pop-in">
-        <input type="text" placeholder="Your Name" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white" disabled />
-        <textarea placeholder="Your Tip" rows="3" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white" disabled></textarea>
-        <button type="button" class="bg-blue-400 text-white font-bold py-3 px-8 rounded-full shadow-lg text-lg" disabled>Submit Tip</button>
+      <h2 class="text-3xl font-bold text-yellow-400 mb-4 text-center brand-heading">Student Tips</h2>
+      <p class="text-blue-200 text-center mb-6">Share your best tips for new students! Approved tips will appear below for everyone to see.</p>
+      <!-- Submit a Tip Form -->
+      <form id="tipForm" action="https://formsubmit.co/letsgoeasey@gmail.com" method="POST" class="glass rounded-2xl shadow-inner p-8 flex flex-col space-y-4 pop-in mb-8">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="text" name="tipName" id="tipName" placeholder="Your Name (optional)" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white placeholder-blue-200" />
+        <textarea name="tipText" id="tipText" placeholder="Your Tip (min 20 characters)" rows="3" minlength="20" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white placeholder-blue-200" required></textarea>
+        <input type="hidden" name="_subject" value="New GoEasey Student Tip" />
+        <input type="hidden" name="_next" value="https://goeasey.vercel.app/?tip=thanks" />
+        <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-full shadow-lg text-lg transition-transform transform hover:scale-105">Submit Tip</button>
       </form>
-      <div id="badgeUnlocked" class="badge-unlocked hide mt-8"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" class="mr-2"><circle cx="12" cy="12" r="10" fill="#FF9900"/><path d="M8 12.5l2.5 2.5 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>You've unlocked all tips!</div>
+      <!-- Thank You Modal for Tips -->
+      <div id="tipThankYouModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hide">
+        <div class="glass rounded-2xl shadow-2xl p-8 max-w-md w-full text-center border-2 border-yellow-400 relative animate-bounceIn">
+          <button id="closeTipThankYouModal" class="absolute top-3 right-3 text-yellow-400 text-2xl font-bold">&times;</button>
+          <div class="text-3xl font-bold text-yellow-400 mb-2 brand-heading">Thank You!</div>
+          <div class="text-blue-100 text-lg mb-4">Your tip has been submitted for review.<br><span class="text-yellow-400 font-semibold">Chill. Settle. Succeed. 🧊</span></div>
+          <div class="mt-2 text-blue-300 text-sm">You can close this window or continue browsing GoEasey.</div>
+        </div>
+      </div>
+      <!-- Tips Display -->
+      <div id="tipsList" class="grid grid-cols-1 gap-6 mt-8"></div>
     </section>
     <footer class="bg-blue-900 text-blue-100 py-6 mt-12">
       <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between px-4">
@@ -484,5 +498,83 @@
     - For more icons, use SVGs or emoji+SVG inline.
     - To add more sections, add new HTML sections and link in the navbar.
   -->
+  <script>
+// --- Tips Data (approved tips) ---
+const tipsData = [
+  { id: 1, name: "Aayush", text: "Get your Opal/Myki card as soon as you land. It makes public transport super easy!", likes: 3 },
+  { id: 2, name: "Priya", text: "Always carry a water bottle—Aussie tap water is safe and free everywhere.", likes: 5 },
+  { id: 3, name: "Samir", text: "Join student Facebook groups to find accommodation and part-time jobs.", likes: 2 },
+  { id: 4, name: "", text: "Don’t be afraid to ask for help—Aussies are friendly and happy to guide you!", likes: 4 },
+];
+// --- Render Tips ---
+function renderTips() {
+  const tipsList = document.getElementById('tipsList');
+  if (!tipsList) return;
+  tipsList.innerHTML = '';
+  tipsData.forEach(tip => {
+    const liked = localStorage.getItem('tip_like_' + tip.id) === '1';
+    const card = document.createElement('div');
+    card.className = 'glass rounded-xl shadow-lg p-6 mb-2 flex flex-col items-start pop-in relative';
+    card.innerHTML = `
+      <div class="text-blue-100 text-lg mb-2">“${tip.text}”</div>
+      <div class="flex items-center w-full justify-between">
+        <span class="text-yellow-400 font-semibold">${tip.name ? tip.name : 'Anonymous'}</span>
+        <button class="like-btn flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold transition-colors ${liked ? 'bg-yellow-400 text-blue-900' : 'bg-blue-800 text-yellow-400 hover:bg-yellow-400 hover:text-blue-900'}" data-id="${tip.id}">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.343l-6.828-6.829a4 4 0 010-5.656z"/></svg>
+          <span class="like-count">${tip.likes + (liked ? 1 : 0)}</span>
+        </button>
+      </div>
+    `;
+    tipsList.appendChild(card);
+  });
+  // Like button logic
+  document.querySelectorAll('.like-btn').forEach(btn => {
+    btn.onclick = function() {
+      const id = btn.getAttribute('data-id');
+      if (localStorage.getItem('tip_like_' + id) === '1') return; // already liked
+      localStorage.setItem('tip_like_' + id, '1');
+      const countSpan = btn.querySelector('.like-count');
+      countSpan.textContent = parseInt(countSpan.textContent) + 1;
+      btn.classList.add('bg-yellow-400', 'text-blue-900');
+      btn.classList.remove('bg-blue-800', 'text-yellow-400', 'hover:bg-yellow-400', 'hover:text-blue-900');
+    };
+  });
+}
+window.addEventListener('DOMContentLoaded', renderTips);
+// --- Tip Form Spam Protection & Thank You Modal ---
+const tipForm = document.getElementById('tipForm');
+const tipThankYouModal = document.getElementById('tipThankYouModal');
+const closeTipThankYouModal = document.getElementById('closeTipThankYouModal');
+function showTipThankYou() {
+  if (tipThankYouModal) tipThankYouModal.classList.remove('hide');
+}
+if (closeTipThankYouModal && tipThankYouModal) {
+  closeTipThankYouModal.onclick = function() { tipThankYouModal.classList.add('hide'); };
+  tipThankYouModal.onclick = function(e) { if (e.target === tipThankYouModal) tipThankYouModal.classList.add('hide'); };
+}
+if (tipForm) {
+  tipForm.addEventListener('submit', function(e) {
+    var honey = tipForm.querySelector('input[name="_honey"]').value;
+    var tipText = tipForm.querySelector('textarea[name="tipText"]').value.trim();
+    if (honey) {
+      e.preventDefault();
+      return false;
+    }
+    if (tipText.length < 20) {
+      alert('Please enter a tip of at least 20 characters.');
+      e.preventDefault();
+      return false;
+    }
+    // Show thank you modal, then allow submit
+    e.preventDefault();
+    showTipThankYou();
+    setTimeout(function() { tipForm.submit(); }, 1200);
+  });
+}
+// Show thank you if redirected (fallback)
+if (window.location.search.includes('tip=thanks')) {
+  setTimeout(function() { showTipThankYou(); }, 400);
+}
+</script>
 </body>
 </html> 
