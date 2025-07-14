@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoEasey: Your Day 1 Kit for Australia</title>
+  <!-- Google Fonts: Poppins & Quicksand for headings -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Quicksand:wght@700&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #0A2540; }
+    h1, h2, h3, .brand-heading { font-family: 'Quicksand', 'Poppins', sans-serif; }
+    ::-webkit-scrollbar { width: 8px; background: #1a2a40; }
+    ::-webkit-scrollbar-thumb { background: #0066CC; border-radius: 8px; }
+    .glass {
+      background: rgba(20, 34, 56, 0.7);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 32px 0 rgba(0,0,0,0.12);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-float {
+      position: fixed; top: 50%; right: 2rem; transform: translateY(-50%); z-index: 50;
+      display: flex; flex-direction: column; gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-icon {
+      width: 3.5rem; height: 3.5rem; border-radius: 9999px;
+      background: linear-gradient(135deg, #182c4b 60%, #233a5e 100%);
+      color: #FF9900;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px #0007, 0 1px 0 #fff2 inset;
+      font-size: 1.5rem; cursor: pointer;
+      border: 2px solid #1a2a40;
+      transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .nav-icon svg { filter: drop-shadow(0 2px 4px #0005); }
+    .nav-icon:hover, .nav-icon.active {
+      background: linear-gradient(135deg, #FF9900 60%, #0066CC 100%);
+      color: #fff;
+      transform: scale(1.15) rotate(-6deg);
+      box-shadow: 0 8px 32px #000a, 0 1px 0 #fff2 inset;
+    }
+    .nav-tooltip {
+      position: absolute; right: 120%; top: 50%; transform: translateY(-50%);
+      background: #1a2a40; color: #fff; padding: 0.3rem 0.8rem; border-radius: 0.5rem;
+      font-size: 0.95rem; white-space: nowrap; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .nav-icon:hover .nav-tooltip { opacity: 1; }
+    .fade-in { opacity: 0; transform: translateY(30px) scale(0.98); }
+    .show { opacity: 1 !important; transform: translateY(0) scale(1) !important; transition: opacity 0.8s, transform 0.8s cubic-bezier(.22,1,.36,1); }
+    .pop-in { animation: popIn 0.7s cubic-bezier(.22,1,.36,1); }
+    @keyframes popIn { 0% { transform: scale(0.7); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); } }
+    .landing-bg {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5;
+      animation: blobMove 16s infinite alternate ease-in-out;
+    }
+    .blob1 { background: #FF9900; width: 400px; height: 400px; top: -100px; left: -100px; animation-delay: 0s; }
+    .blob2 { background: #0066CC; width: 350px; height: 350px; bottom: -80px; right: -80px; animation-delay: 2s; }
+    .blob3 { background: #fff; width: 200px; height: 200px; top: 60%; left: 60%; opacity: 0.12; animation-delay: 4s; }
+    @keyframes blobMove {
+      0% { transform: scale(1) translate(0,0); }
+      100% { transform: scale(1.2) translate(40px, 60px); }
+    }
+    @media (max-width: 768px) {
+      .nav-float { right: 0.5rem; gap: 1rem; }
+      .nav-icon { width: 2.7rem; height: 2.7rem; font-size: 1.1rem; }
+      .nav-tooltip { font-size: 0.8rem; }
+    }
+    .hide { display: none !important; }
+    /* Progress bar */
+    .progress-bar {
+      position: fixed; right: 1.2rem; top: 10%; height: 80vh; width: 6px; background: #233a5e; border-radius: 3px; z-index: 40;
+      display: flex; align-items: flex-end; overflow: hidden;
+    }
+    .progress-bar-inner {
+      width: 100%; background: linear-gradient(180deg, #FF9900 0%, #0066CC 100%); border-radius: 3px;
+      transition: height 0.3s cubic-bezier(.22,1,.36,1);
+    }
+    /* Confetti */
+    .confetti {
+      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 100;
+    }
+    .confetti-piece {
+      position: absolute; width: 12px; height: 12px; border-radius: 3px; opacity: 0.8;
+      animation: confetti-fall 1.2s cubic-bezier(.22,1,.36,1) forwards;
+    }
+    @keyframes confetti-fall {
+      0% { transform: translateY(-40px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    /* Badge at end */
+    .badge-unlocked {
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(90deg, #FF9900 60%, #0066CC 100%);
+      color: #fff; font-weight: bold; font-size: 1.2rem;
+      border-radius: 9999px; padding: 0.7rem 1.5rem; box-shadow: 0 2px 12px #0005;
+      margin: 2rem auto 0 auto; width: fit-content;
+      animation: popIn 0.8s cubic-bezier(.22,1,.36,1);
+    }
+  </style>
+</head>
+<body class="text-gray-100">
+  <!-- Animated Blobs Background -->
+  <div class="landing-bg">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+
+  <!-- Confetti Container -->
+  <div id="confetti" class="confetti hide"></div>
+
+  <!-- Immersive Landing View -->
+  <section id="landing" class="min-h-screen flex flex-col items-center justify-center relative z-10 fade-in">
+    <div class="flex flex-col items-center space-y-6">
+      <div class="brand-heading text-5xl md:text-7xl font-bold text-yellow-400 drop-shadow-lg flex items-center gap-3">
+        GoEasey <span class="text-blue-300 text-4xl md:text-6xl">🧊</span>
+      </div>
+      <div class="text-xl md:text-2xl text-blue-100 text-center max-w-xl">Your Day 1 Kit for Australia<br><span class="text-yellow-400 font-semibold">Chill. Settle. Succeed.</span></div>
+      <button id="getStartedBtn" class="mt-6 bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-10 rounded-full shadow-lg text-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-300 animate-bounce">Get Started</button>
+    </div>
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-blue-200 text-xs opacity-60">#GoEasey #ChillVibes</div>
+  </section>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-bar-inner" id="progressBarInner" style="height: 0%"></div>
+  </div>
+
+  <!-- Floating Circular Navbar -->
+  <div id="navFloat" class="nav-float fade-in hide">
+    <a href="#home" class="nav-icon" data-tooltip="Home">
+      <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M3 10.75L12 4l9 6.75V20a1 1 0 0 1-1 1h-4.5a1 1 0 0 1-1-1v-4.5h-3V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10.75Z" stroke="#FF9900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="nav-tooltip">Home</span>
+    </a>
+    <a href="#about" class="nav-icon" data-tooltip="About">
+      <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="#FF9900" stroke-width="2"/><path d="M4 20c0-2.21 3.582-4 8-4s8 1.79 8 4" stroke="#FF9900" stroke-width="2"/></svg>
+      <span class="nav-tooltip">About</span>
+    </a>
+    <a href="#kit" class="nav-icon" data-tooltip="Kit">
+      <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke="#FF9900" stroke-width="2"/><path d="M16 3v4M8 3v4" stroke="#FF9900" stroke-width="2"/></svg>
+      <span class="nav-tooltip">Kit</span>
+    </a>
+    <a href="#guides" class="nav-icon" data-tooltip="Guides">
+      <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" stroke="#FF9900" stroke-width="2"/><path d="M8 4v16M16 4v16" stroke="#FF9900" stroke-width="2"/></svg>
+      <span class="nav-tooltip">Guides</span>
+    </a>
+    <a href="#contact" class="nav-icon" data-tooltip="Contact">
+      <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#FF9900" stroke-width="2"/><path d="M3 7l9 6 9-6" stroke="#FF9900" stroke-width="2"/></svg>
+      <span class="nav-tooltip">Contact</span>
+    </a>
+  </div>
+
+  <!-- Main Content (hidden until Get Started) -->
+  <div id="mainContent" class="hide">
+    <!-- About Section -->
+    <section id="home" class="pt-32 pb-16 min-h-[60vh] flex flex-col items-center justify-center fade-in">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-4 brand-heading">Welcome to GoEasey</h2>
+      <p class="text-lg text-blue-100 mb-6 text-center max-w-2xl">GoEasey is your trusted companion for a smooth start in Australia. We help students settle in with all essentials in one kit. <span class="text-yellow-400 font-semibold">Chill. Settle. Succeed.</span></p>
+    </section>
+    <section id="about" class="max-w-4xl mx-auto py-16 px-4 fade-in">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-4 brand-heading">About GoEasey</h2>
+      <div class="flex flex-col md:flex-row items-center md:space-x-8">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Founder" class="w-32 h-32 rounded-full border-4 border-blue-800 mb-4 md:mb-0 glass pop-in" />
+        <div>
+          <h3 class="text-xl font-semibold text-blue-200 mb-2 brand-heading">My Story</h3>
+          <p class="text-blue-200">Hi, I’m Dinesh, the founder of GoEasey. As a former international student, I know how overwhelming Day 1 in Australia can be. I created GoEasey to help you feel at home, faster.</p>
+        </div>
+      </div>
+    </section>
+    <section id="kit" class="py-16 px-4 fade-in">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-8 text-center brand-heading">What’s in the Kit?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <svg width="48" height="48" fill="none" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke="#FF9900" stroke-width="2"/><rect x="7" y="11" width="2" height="2" rx="1" fill="#FF9900"/><rect x="11" y="11" width="2" height="2" rx="1" fill="#FF9900"/><rect x="15" y="11" width="2" height="2" rx="1" fill="#FF9900"/></svg>
+          <h3 class="text-xl font-semibold text-blue-200 mb-2">Amaysim SIM</h3>
+          <p class="text-blue-100 text-center">Get connected instantly with a prepaid SIM.</p>
+        </div>
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <svg width="48" height="48" fill="none" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2" stroke="#FF9900" stroke-width="2"/><rect x="8" y="10" width="8" height="4" rx="1" fill="#FF9900"/></svg>
+          <h3 class="text-xl font-semibold text-blue-200 mb-2">$25 Westfield Gift Card</h3>
+          <p class="text-blue-100 text-center">Shop at Australia’s top malls.</p>
+        </div>
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <svg width="48" height="48" fill="none" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="2" stroke="#FF9900" stroke-width="2"/><path d="M7 17v2a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2" stroke="#FF9900" stroke-width="2"/></svg>
+          <h3 class="text-xl font-semibold text-blue-200 mb-2">Transport Card</h3>
+          <p class="text-blue-100 text-center">Travel on public transport hassle-free.</p>
+        </div>
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <svg width="48" height="48" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke="#FF9900" stroke-width="2"/><path d="M12 8v4l3 3" stroke="#FF9900" stroke-width="2"/></svg>
+          <h3 class="text-xl font-semibold text-blue-200 mb-2">Medicare Guide</h3>
+          <p class="text-blue-100 text-center">Step-by-step Medicare setup.</p>
+        </div>
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <svg width="48" height="48" fill="none" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="8" rx="2" stroke="#FF9900" stroke-width="2"/><rect x="8" y="12" width="8" height="2" rx="1" fill="#FF9900"/></svg>
+          <h3 class="text-xl font-semibold text-blue-200 mb-2">Bank Setup Guide</h3>
+          <p class="text-blue-100 text-center">Open your bank account easily.</p>
+        </div>
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <svg width="48" height="48" fill="none" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" stroke="#FF9900" stroke-width="2"/><path d="M10 10h4v4h-4z" fill="#FF9900"/></svg>
+          <h3 class="text-xl font-semibold text-blue-200 mb-2">Airport Guide PDF</h3>
+          <p class="text-blue-100 text-center">Navigate arrivals with confidence.</p>
+        </div>
+      </div>
+    </section>
+    <section id="guides" class="py-16 px-4 max-w-5xl mx-auto fade-in">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-8 text-center brand-heading">Guides & How-Tos</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col space-y-3 hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <h3 class="text-xl font-semibold text-blue-200">Bank Account Setup</h3>
+          <p class="text-blue-100">Step-by-step guide to opening your first bank account in Australia.</p>
+          <a href="https://wise.com/invite/u/dineshdigbijay" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:underline font-semibold">Get started with Wise (affiliate)</a>
+        </div>
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col space-y-3 hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <h3 class="text-xl font-semibold text-blue-200">SIM Activation</h3>
+          <p class="text-blue-100">How to activate your Amaysim SIM card in minutes.</p>
+          <a href="https://www.amaysim.com.au/activate-sim" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:underline font-semibold">Activate SIM</a>
+          <div class="mt-2">
+            <a href="#" class="inline-flex items-center text-yellow-400 hover:underline">
+              <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553 2.276A2 2 0 0121 14.118V17a2 2 0 01-2 2H5a2 2 0 01-2-2v-2.882a2 2 0 01.447-1.342L8 10m7 0V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v4m7 0H8" /></svg>
+              Watch video (QR code)
+            </a>
+          </div>
+        </div>
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col space-y-3 hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <h3 class="text-xl font-semibold text-blue-200">TFN Application</h3>
+          <p class="text-blue-100">Apply for your Tax File Number online.</p>
+          <a href="https://www.ato.gov.au/Individuals/Tax-file-number/Apply-for-a-TFN/" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:underline font-semibold">Apply for TFN</a>
+        </div>
+        <div class="glass rounded-2xl shadow-lg p-6 flex flex-col space-y-3 hover:shadow-2xl transition-shadow duration-300 hover:scale-105 pop-in">
+          <h3 class="text-xl font-semibold text-blue-200">Medicare Setup</h3>
+          <p class="text-blue-100">Get access to Australia’s healthcare system.</p>
+          <a href="https://www.servicesaustralia.gov.au/medicare-card" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:underline font-semibold">Medicare Info</a>
+        </div>
+      </div>
+      <div class="mt-12 text-center">
+        <a href="#" class="inline-flex items-center bg-blue-700 hover:bg-yellow-400 text-white hover:text-blue-900 font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+          Download Airport Guide (PDF)
+        </a>
+      </div>
+    </section>
+    <section id="contact" class="py-16 px-4 max-w-3xl mx-auto fade-in">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-8 text-center brand-heading">Contact Us</h2>
+      <form class="glass rounded-2xl shadow-lg p-8 flex flex-col space-y-4 pop-in">
+        <input type="text" placeholder="Name" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" disabled />
+        <input type="email" placeholder="Email" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" disabled />
+        <textarea placeholder="Message" rows="4" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" disabled></textarea>
+        <button type="button" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-lg" onclick="alert('Form submissions coming soon!')">
+          Send Message
+        </button>
+      </form>
+      <div class="flex justify-center space-x-6 mt-8">
+        <a href="https://instagram.com/goeazeau" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:text-blue-400 text-2xl">
+          <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 1 1 0 10.5a5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5a3.75 3.75 0 0 0 0-7.5zm5.25.75a1 1 0 1 1-2 0a1 1 0 0 1 2 0z"/></svg>
+        </a>
+        <a href="https://tiktok.com/@goeazeau" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:text-blue-400 text-2xl">
+          <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12.5 2h2.25a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 0 .75.75h2.5a.75.75 0 0 1 .75.75v2.25a7.25 7.25 0 1 1-7.25-7.25z"/></svg>
+        </a>
+      </div>
+    </section>
+    <section id="tips" class="py-16 px-4 max-w-3xl mx-auto fade-in">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-4 text-center brand-heading">Student Tips (Coming Soon)</h2>
+      <p class="text-blue-200 text-center mb-6">Share your best tips for new students! Community submissions will be open soon.</p>
+      <form class="glass rounded-2xl shadow-inner p-8 flex flex-col space-y-4 opacity-50 cursor-not-allowed pop-in">
+        <input type="text" placeholder="Your Name" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white" disabled />
+        <textarea placeholder="Your Tip" rows="3" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white" disabled></textarea>
+        <button type="button" class="bg-blue-400 text-white font-bold py-3 px-8 rounded-full shadow-lg text-lg" disabled>Submit Tip</button>
+      </form>
+      <div id="badgeUnlocked" class="badge-unlocked hide mt-8"><svg width="28" height="28" fill="none" viewBox="0 0 24 24" class="mr-2"><circle cx="12" cy="12" r="10" fill="#FF9900"/><path d="M8 12.5l2.5 2.5 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>You've unlocked all tips!</div>
+    </section>
+    <footer class="bg-blue-900 text-blue-100 py-6 mt-12">
+      <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between px-4">
+        <span class="font-semibold">© <span id="year"></span> GoEasey. All rights reserved.</span>
+        <div class="flex space-x-4 mt-2 md:mt-0">
+          <a href="#home" class="hover:underline">Home</a>
+          <a href="#about" class="hover:underline">About</a>
+          <a href="#kit" class="hover:underline">Kit</a>
+          <a href="#guides" class="hover:underline">Guides</a>
+          <a href="#contact" class="hover:underline">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Set year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Animate fade-in for landing and nav
+    window.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('landing').classList.add('show');
+      setTimeout(function() {
+        document.getElementById('navFloat').classList.remove('hide');
+        document.getElementById('navFloat').classList.add('show');
+      }, 600);
+    });
+    // Confetti burst
+    function confettiBurst() {
+      var confetti = document.getElementById('confetti');
+      confetti.innerHTML = '';
+      confetti.classList.remove('hide');
+      var colors = ['#FF9900', '#0066CC', '#fff', '#FFD700', '#00CFFF'];
+      for (var i = 0; i < 36; i++) {
+        var piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = (Math.random() * 100) + 'vw';
+        piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+        piece.style.animationDelay = (Math.random()*0.5) + 's';
+        confetti.appendChild(piece);
+      }
+      setTimeout(function() { confetti.classList.add('hide'); }, 1800);
+    }
+    // Get Started button logic
+    document.getElementById('getStartedBtn').addEventListener('click', function() {
+      confettiBurst();
+      document.getElementById('landing').classList.add('hide');
+      document.getElementById('mainContent').classList.remove('hide');
+      setTimeout(function() {
+        document.querySelectorAll('#mainContent .fade-in').forEach(function(el, i) {
+          setTimeout(function() { el.classList.add('show'); el.classList.add('pop-in'); }, 200 + i * 120);
+        });
+      }, 100);
+    });
+    // Nav icon click scroll
+    document.querySelectorAll('.nav-icon').forEach(function(icon) {
+      icon.addEventListener('click', function(e) {
+        var href = icon.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          e.preventDefault();
+          if (document.getElementById('mainContent').classList.contains('hide')) {
+            document.getElementById('getStartedBtn').click();
+            setTimeout(function() {
+              document.querySelector(href).scrollIntoView({ behavior: 'smooth' });
+            }, 700);
+          } else {
+            document.querySelector(href).scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    });
+    // Nav highlight on scroll
+    var sections = ['home','about','kit','guides','contact'];
+    function highlightNav() {
+      var scrollPos = window.scrollY || window.pageYOffset;
+      var offset = 120;
+      sections.forEach(function(id) {
+        var sec = document.getElementById(id);
+        var link = document.querySelector('.nav-icon[href="#'+id+'"]');
+        if (sec && link) {
+          var top = sec.offsetTop - offset;
+          var bottom = top + sec.offsetHeight;
+          if (scrollPos >= top && scrollPos < bottom) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        }
+      });
+    }
+    window.addEventListener('scroll', highlightNav);
+    window.addEventListener('DOMContentLoaded', highlightNav);
+    // Progress bar logic
+    function updateProgressBar() {
+      var docHeight = document.body.scrollHeight - window.innerHeight;
+      var scrolled = window.scrollY || window.pageYOffset;
+      var percent = Math.min(100, Math.max(0, (scrolled / docHeight) * 100));
+      document.getElementById('progressBarInner').style.height = percent + '%';
+      // Unlock badge at end
+      var badge = document.getElementById('badgeUnlocked');
+      if (percent > 97) {
+        badge.classList.remove('hide');
+      } else {
+        badge.classList.add('hide');
+      }
+    }
+    window.addEventListener('scroll', updateProgressBar);
+    window.addEventListener('DOMContentLoaded', updateProgressBar);
+  </script>
+  <!--
+    =============================
+    How to Add Content & Expand
+    =============================
+    - To update text, images, or links, edit the relevant HTML above.
+    - To add new guides, add more cards in the Guides section.
+    - For community contributions, enable the form in Community Tips and connect it to a backend or CMS.
+    - For a real contact form, connect the button to a backend or use a service like Formspree.
+    - All styling is via Tailwind classes and custom CSS above.
+    - For more icons, use SVGs or emoji+SVG inline.
+    - To add more sections, add new HTML sections and link in the navbar.
+  -->
+</body>
+</html> 
