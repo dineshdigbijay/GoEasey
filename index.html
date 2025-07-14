@@ -583,18 +583,15 @@ if (tipForm) {
 }
 // Show thank you if redirected (fallback)
 if (window.location.search.includes('tip=thanks')) {
-  setTimeout(function() { showTipThankYou(); }, 400);
-}
-// --- Tips Modal Logic ---
-const openTipsModal = document.getElementById('openTipsModal');
-const tipsModal = document.getElementById('tipsModal');
-const closeTipsModal = document.getElementById('closeTipsModal');
-if (openTipsModal && tipsModal) {
-  openTipsModal.onclick = function() { tipsModal.classList.remove('hide'); };
-}
-if (closeTipsModal && tipsModal) {
-  closeTipsModal.onclick = function() { tipsModal.classList.add('hide'); };
-  tipsModal.onclick = function(e) { if (e.target === tipsModal) tipsModal.classList.add('hide'); };
+  setTimeout(function() {
+    showTipThankYou();
+    // Remove ?tip=thanks from URL so modal only shows once
+    if (window.history.replaceState) {
+      const url = new URL(window.location);
+      url.searchParams.delete('tip');
+      window.history.replaceState({}, document.title, url.pathname + url.search);
+    }
+  }, 400);
 }
 // --- Contact Thank You Modal: Only show once ---
 if (window.location.search.includes('contact=thanks')) {
