@@ -250,14 +250,23 @@
     </section>
     <section id="contact" class="py-16 px-4 max-w-3xl mx-auto fade-in">
       <h2 class="text-3xl font-bold text-yellow-400 mb-8 text-center brand-heading">Contact Us</h2>
-      <form class="glass rounded-2xl shadow-lg p-8 flex flex-col space-y-4 pop-in">
-        <input type="text" placeholder="Name" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" disabled />
-        <input type="email" placeholder="Email" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" disabled />
-        <textarea placeholder="Message" rows="4" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" disabled></textarea>
-        <button type="button" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-lg" onclick="alert('Form submissions coming soon!')">
+      <form action="https://formsubmit.co/letsgoeasey@gmail.com" method="POST" class="glass rounded-2xl shadow-lg p-8 flex flex-col space-y-4 pop-in" id="contactForm">
+        <input type="text" name="name" placeholder="Name" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" required />
+        <input type="email" name="email" placeholder="Email" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" required />
+        <textarea name="message" placeholder="Message" rows="4" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" required></textarea>
+        <input type="hidden" name="_next" value="https://goeasey.com/?contact=thanks" />
+        <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-lg">
           Send Message
         </button>
       </form>
+      <script>
+        // Show thank you alert if redirected after formsubmit
+        if (window.location.search.includes('contact=thanks')) {
+          setTimeout(function() {
+            alert('Thank you for contacting GoEasey! We have received your message.');
+          }, 400);
+        }
+      </script>
       <div class="flex justify-center space-x-6 mt-8">
         <a href="https://instagram.com/goeasey" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:text-blue-400 text-2xl">
           <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 1 1 0 10.5a5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5a3.75 3.75 0 0 0 0-7.5zm5.25.75a1 1 0 1 1-2 0a1 1 0 0 1 2 0z"/></svg>
