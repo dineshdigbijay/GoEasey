@@ -251,16 +251,43 @@
     <section id="contact" class="py-16 px-4 max-w-3xl mx-auto fade-in">
       <h2 class="text-3xl font-bold text-yellow-400 mb-8 text-center brand-heading">Contact Us</h2>
       <form action="https://formsubmit.co/letsgoeasey@gmail.com" method="POST" class="glass rounded-2xl shadow-lg p-8 flex flex-col space-y-4 pop-in" id="contactForm">
-        <input type="text" name="name" placeholder="Name" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" required />
+        <!-- Honeypot field for spam protection -->
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="text" name="name" id="contactName" placeholder="Name" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" required />
         <input type="email" name="email" placeholder="Email" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" required />
-        <textarea name="message" placeholder="Message" rows="4" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" required></textarea>
+        <textarea name="message" id="contactMessage" placeholder="Message" rows="4" minlength="10" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-lg text-white placeholder-blue-200" required></textarea>
         <input type="hidden" name="_next" value="https://goeasey.com/?contact=thanks" />
         <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-lg">
           Send Message
         </button>
       </form>
       <script>
-        // Show thank you alert if redirected after formsubmit
+        // Enhanced contact form: spam protection + custom thank you
+        var contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+          contactForm.addEventListener('submit', function(e) {
+            var honey = contactForm.querySelector('input[name="_honey"]').value;
+            var name = contactForm.querySelector('input[name="name"]').value.trim();
+            var message = contactForm.querySelector('textarea[name="message"]').value.trim();
+            if (honey) {
+              // Spam bot detected, silently block
+              e.preventDefault();
+              return false;
+            }
+            if (message.length < 10) {
+              alert('Please enter a message of at least 10 characters.');
+              e.preventDefault();
+              return false;
+            }
+            // Show custom thank you, then allow submit
+            e.preventDefault();
+            setTimeout(function() {
+              alert('Thank you, ' + (name ? name : 'friend') + '! We have received your message.');
+              contactForm.submit();
+            }, 200);
+          });
+        }
+        // Show thank you if redirected (fallback)
         if (window.location.search.includes('contact=thanks')) {
           setTimeout(function() {
             alert('Thank you for contacting GoEasey! We have received your message.');
