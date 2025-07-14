@@ -161,38 +161,6 @@
     </a>
   </div>
 
-  <!-- Tips Section (always visible, above mainContent) -->
-  <section id="tips" class="py-16 px-4 max-w-3xl mx-auto fade-in">
-    <h2 class="text-3xl font-bold text-yellow-400 mb-4 text-center brand-heading">Student Tips</h2>
-    <p class="text-blue-200 text-center mb-6">Share your best tips for new students! Approved tips will appear below for everyone to see.</p>
-    <div class="glass rounded-2xl shadow-2xl p-6 mb-8 flex flex-col items-center relative">
-      <div id="tipCarousel" class="w-full flex flex-col items-center min-h-[120px]"></div>
-      <div class="flex justify-center mt-6">
-        <button id="tipPrev" class="text-yellow-400 hover:text-blue-400 text-2xl mr-4">←</button>
-        <button id="tipNext" class="text-yellow-400 hover:text-blue-400 text-2xl">→</button>
-      </div>
-      <div id="tipDots" class="flex space-x-2 mt-4"></div>
-    </div>
-    <!-- Submit a Tip Form -->
-    <form id="tipForm" action="https://formsubmit.co/letsgoeasey@gmail.com" method="POST" class="glass rounded-2xl shadow-inner p-6 flex flex-col space-y-4 pop-in mb-8">
-      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-      <input type="text" name="tipName" id="tipName" placeholder="Your Name (optional)" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white placeholder-blue-200" />
-      <textarea name="tipText" id="tipText" placeholder="Your Tip (min 20 characters)" rows="3" minlength="20" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white placeholder-blue-200" required></textarea>
-      <input type="hidden" name="_subject" value="New GoEasey Student Tip" />
-      <input type="hidden" name="_next" value="https://goeasey.vercel.app/?tip=thanks" />
-      <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-full shadow-lg text-lg transition-transform transform hover:scale-105">Submit Tip</button>
-    </form>
-    <!-- Thank You Modal for Tips -->
-    <div id="tipThankYouModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hide">
-      <div class="glass rounded-2xl shadow-2xl p-8 max-w-md w-full text-center border-2 border-yellow-400 relative animate-bounceIn">
-        <button id="closeTipThankYouModal" class="absolute top-3 right-3 text-yellow-400 text-2xl font-bold">&times;</button>
-        <div class="text-3xl font-bold text-yellow-400 mb-2 brand-heading">Thank You!</div>
-        <div class="text-blue-100 text-lg mb-4">Your tip has been submitted for review.<br><span class="text-yellow-400 font-semibold">Chill. Settle. Succeed. 🧊</span></div>
-        <div class="mt-2 text-blue-300 text-sm">You can close this window or continue browsing GoEasey.</div>
-      </div>
-    </div>
-  </section>
-
   <!-- Main Content (hidden until Get Started) -->
   <div id="mainContent" class="hide">
     <!-- About Section -->
@@ -354,6 +322,37 @@
         <a href="https://www.youtube.com/@GoEasey" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:text-blue-400 text-2xl">
           <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a2.994 2.994 0 0 0-2.107-2.12C19.228 3.5 12 3.5 12 3.5s-7.228 0-9.391.566A2.994 2.994 0 0 0 .502 6.186C0 8.36 0 12 0 12s0 3.64.502 5.814a2.994 2.994 0 0 0 2.107 2.12C4.772 20.5 12 20.5 12 20.5s7.228 0 9.391-.566a2.994 2.994 0 0 0 2.107-2.12C24 15.64 24 12 24 12s0-3.64-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
         </a>
+      </div>
+    </section>
+    <!-- Tips Section (below Contact Us) -->
+    <section id="tips" class="py-16 px-4 max-w-3xl mx-auto fade-in">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-4 text-center brand-heading">Student Tips</h2>
+      <p class="text-blue-200 text-center mb-6">Share your best tips for new students! Approved tips will appear below for everyone to see.</p>
+      <div class="glass rounded-2xl shadow-2xl p-6 mb-8 flex flex-col items-center relative">
+        <div id="tipCarousel" class="w-full flex flex-col items-center min-h-[120px]"></div>
+        <div class="flex justify-center mt-6">
+          <button id="tipPrev" class="text-yellow-400 hover:text-blue-400 text-2xl mr-4">←</button>
+          <button id="tipNext" class="text-yellow-400 hover:text-blue-400 text-2xl">→</button>
+        </div>
+        <div id="tipDots" class="flex space-x-2 mt-4"></div>
+      </div>
+      <!-- Submit a Tip Form -->
+      <form id="tipForm" action="https://formsubmit.co/letsgoeasey@gmail.com" method="POST" class="glass rounded-2xl shadow-inner p-6 flex flex-col space-y-4 pop-in mb-8">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="text" name="tipName" id="tipName" placeholder="Your Name (optional)" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white placeholder-blue-200" />
+        <textarea name="tipText" id="tipText" placeholder="Your Tip (min 20 characters)" rows="3" minlength="20" class="border border-gray-700 bg-blue-900 bg-opacity-40 rounded-lg px-4 py-3 text-lg text-white placeholder-blue-200" required></textarea>
+        <input type="hidden" name="_subject" value="New GoEasey Student Tip" />
+        <input type="hidden" name="_next" value="https://goeasey.vercel.app/?tip=thanks" />
+        <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-full shadow-lg text-lg transition-transform transform hover:scale-105">Submit Tip</button>
+      </form>
+      <!-- Thank You Modal for Tips -->
+      <div id="tipThankYouModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hide">
+        <div class="glass rounded-2xl shadow-2xl p-8 max-w-md w-full text-center border-2 border-yellow-400 relative animate-bounceIn">
+          <button id="closeTipThankYouModal" class="absolute top-3 right-3 text-yellow-400 text-2xl font-bold">&times;</button>
+          <div class="text-3xl font-bold text-yellow-400 mb-2 brand-heading">Thank You!</div>
+          <div class="text-blue-100 text-lg mb-4">Your tip has been submitted for review.<br><span class="text-yellow-400 font-semibold">Chill. Settle. Succeed. 🧊</span></div>
+          <div class="mt-2 text-blue-300 text-sm">You can close this window or continue browsing GoEasey.</div>
+        </div>
       </div>
     </section>
     <footer class="bg-blue-900 text-blue-100 py-6 mt-12">
